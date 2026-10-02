@@ -4,7 +4,13 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const navLinks = ["Home", "About", "Portfolio", "Testimonials", "Contact"];
+const navLinks = [
+  { label: "Home", href: "#top" },
+  { label: "About", href: "#about" },
+  { label: "Portfolio", href: "#portfolio" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "Contact", href: "#contact" },
+];
 const DESIGN_W = 1280;
 const DESIGN_H = 800;
 
@@ -201,11 +207,15 @@ function MouseIcon() {
 
 export default function Hero() {
   const [scale, setScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   useLayoutEffect(() => {
     const updateScale = () => {
-      const next = Math.min(window.innerWidth / DESIGN_W, window.innerHeight / DESIGN_H);
-      setScale(Math.max(next, 0.01));
+      // Scale to screen width so the full top bar (name + all nav links) always shows.
+      // Pin to top; fill any leftover area with the stage background via shell.
+      const s = Math.max(window.innerWidth / DESIGN_W, 0.01);
+      setScale(s);
+      setOffset({ x: 0, y: 0 });
     };
     updateScale();
     window.addEventListener("resize", updateScale);
@@ -216,23 +226,14 @@ export default function Hero() {
     };
   }, []);
 
-  useEffect(() => {
-    // keep body from scrolling on any device while hero is shown
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
-
   return (
     <section className="hero-scale-shell">
-      {/* Sized wrapper so scaled layout fits the viewport exactly */}
       <div
         className="hero-scale-fit"
         style={{
           width: DESIGN_W * scale,
           height: DESIGN_H * scale,
+          transform: `translate(${offset.x}px, ${offset.y}px)`,
         }}
       >
         <motion.div
@@ -245,9 +246,34 @@ export default function Hero() {
             height: DESIGN_H,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
-            background: "transparent",
+            background: `
+              radial-gradient(ellipse 80% 70% at 12% 8%, #0f4c8a 0%, transparent 55%),
+              radial-gradient(ellipse 60% 50% at 85% 90%, #1a1550 0%, transparent 50%),
+              linear-gradient(145deg, #0c2a5a 0%, #0a1230 45%, #0d1538 75%, #1a1550 100%)
+            `,
           }}
         >
+        <motion.div
+          className="pointer-events-none absolute -left-24 -top-24 z-0 h-72 w-72 rounded-full bg-[#3b8cff]/20 blur-3xl"
+          animate={{ opacity: [0.25, 0.5, 0.25], scale: [1, 1.15, 1] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          aria-hidden="true"
+        />
+        <motion.div
+          className="pointer-events-none absolute -bottom-20 -right-16 z-0 h-64 w-64 rounded-full bg-[#6b5cff]/15 blur-3xl"
+          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1.1, 1, 1.1] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 40%, rgba(5,10,30,0.35) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
         {/* Navbar — same on every device */}
         <header className="relative z-20 mx-auto flex w-full max-w-[1200px] items-center justify-between px-12 pt-8">
           <motion.a
@@ -281,20 +307,28 @@ export default function Hero() {
             initial="hidden"
             animate="visible"
           >
-            {navLinks.map((link) => {
-              const active = link === "Home";
+            {navLinks.map(({ label, href }) => {
+              const active = label === "Home";
               return (
                 <motion.a
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
+                  key={label}
+                  href={href}
                   variants={navItem}
                   className={`nav-link group relative text-[13px] font-medium tracking-[0.02em] ${
                     active ? "text-[var(--nav-active)]" : "text-[var(--muted)]"
                   }`}
                   whileHover={{ y: -2, color: "#3b8cff" }}
                   whileTap={{ scale: 0.96 }}
+                  onClick={(e) => {
+                    const id = href.replace("#", "");
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    window.history.replaceState(null, "", href);
+                  }}
                 >
-                  {link}
+                  {label}
                   <motion.span
                     className="absolute -bottom-1 left-0 h-px bg-[var(--nav-active)]"
                     initial={{ width: active ? "100%" : "0%" }}
@@ -307,21 +341,24 @@ export default function Hero() {
           </motion.nav>
         </header>
 
-        <main className="relative z-10 mx-auto grid h-[calc(100%-5.5rem)] w-full max-w-[1200px] grid-cols-[1fr_auto] items-center gap-14 px-12 pb-12 pt-6">
-          <div className="flex max-w-[460px] flex-col justify-center">
+        <main className="relative z-10 mx-auto grid h-[calc(100%-5.5rem)] w-full max-w-[1200px] grid-cols-[1fr_auto] items-center gap-16 px-12 pb-8 pt-2">
+          <div className="flex max-w-[440px] flex-col justify-center">
             <motion.p
               custom={0}
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mb-4 text-[14px] font-medium tracking-[0.01em]"
-              style={{ color: "var(--accent-bright)" }}
+              className="welcome-line mb-2.5 text-[18px] font-medium italic tracking-[0.04em]"
+              style={{
+                fontFamily: "var(--font-welcome)",
+                color: "var(--accent-bright)",
+              }}
             >
               Welcome to my portfolio!
             </motion.p>
 
             <motion.h1
-              className="mb-0 text-[52px] font-semibold leading-[1.15] tracking-[-0.02em]"
+              className="mb-0 text-[52px] font-semibold leading-[1.12] tracking-[-0.02em]"
               style={{ fontFamily: "var(--font-heading)" }}
               aria-label="Hello, my name's Shumail"
             >
@@ -357,7 +394,7 @@ export default function Hero() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mt-3 mb-8 max-w-[340px] text-[15px] leading-[1.6]"
+              className="mt-4 mb-7 max-w-[340px] text-[15px] leading-[1.65]"
               style={{ color: "var(--body-gray)" }}
             >
               I&apos;m a visual designer from London. Currently working with{" "}
@@ -375,7 +412,7 @@ export default function Hero() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mb-10 flex flex-wrap items-center gap-3"
+              className="mb-7 flex flex-wrap items-center gap-3.5"
             >
               <motion.a
                 href="#cv"
@@ -417,6 +454,23 @@ export default function Hero() {
               animate="visible"
               className="flex cursor-pointer items-center gap-3"
               whileHover={{ x: 4 }}
+              onClick={() => {
+                document.getElementById("about")?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  document.getElementById("about")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }}
             >
               <motion.div
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5"
@@ -436,7 +490,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          <div className="relative mr-16 flex items-center justify-center">
+          <div className="relative mr-24 -mt-24 flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{
@@ -470,7 +524,7 @@ export default function Hero() {
               initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ delay: 0.55, duration: 0.9, ease: easeOut }}
-              className="frame-glow group relative h-[380px] w-[270px] overflow-hidden rounded-full"
+              className="frame-glow group relative h-[400px] w-[260px] overflow-hidden rounded-full"
               style={{ borderRadius: "9999px" }}
               whileHover={{
                 scale: 1.05,
@@ -490,7 +544,7 @@ export default function Hero() {
                   fill
                   priority
                   className="object-cover object-[center_8%]"
-                  sizes="270px"
+                  sizes="260px"
                 />
               </motion.div>
               <motion.div
@@ -508,66 +562,66 @@ export default function Hero() {
             >
               <Spiral3D />
             </motion.div>
+
+            {/* Follow bar — one-icon gutter from portrait, near card edge */}
+            <aside className="absolute right-[-3.5rem] top-0 bottom-0 z-20 flex w-10 flex-col items-center justify-center gap-2.5">
+              <motion.div
+                className="flex flex-col items-center gap-1.5"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.7, duration: 0.55 }}
+              >
+                <span
+                  className="origin-center whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--muted)]"
+                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                >
+                  Follow me on
+                </span>
+                <div className="flex flex-col items-center">
+                  <motion.div
+                    className="w-px bg-gradient-to-b from-[var(--muted)] to-transparent opacity-50"
+                    initial={{ height: 0 }}
+                    animate={{ height: 28 }}
+                    transition={{ delay: 0.9, duration: 0.6 }}
+                  />
+                  <svg width="7" height="7" viewBox="0 0 8 8" className="-mt-0.5 opacity-50" aria-hidden="true">
+                    <path d="M4 8L0 4h8L4 8z" fill="#aab3c5" />
+                  </svg>
+                </div>
+              </motion.div>
+
+              <div className="mt-0.5 flex flex-col items-center gap-3">
+                {[
+                  { href: "https://www.facebook.com/share/1JC6A7g4MA/", label: "Facebook", color: "var(--facebook)", Icon: FacebookIcon },
+                  { href: "https://www.instagram.com/shumail_butt123", label: "Instagram", color: "var(--instagram)", Icon: InstagramIcon },
+                  { href: "https://linkedin.com", label: "LinkedIn", color: "var(--linkedin)", Icon: LinkedInIcon },
+                ].map(({ href, label, color, Icon }, i) => (
+                  <motion.a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-icon flex h-9 w-9 items-center justify-center rounded-full bg-white/5"
+                    style={{ color }}
+                    aria-label={label}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1 + i * 0.12, type: "spring", stiffness: 320 }}
+                    whileHover={{
+                      scale: 1.22,
+                      y: -3,
+                      backgroundColor: "rgba(255,255,255,0.12)",
+                      boxShadow: `0 6px 16px color-mix(in srgb, ${color} 45%, transparent)`,
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Icon />
+                  </motion.a>
+                ))}
+              </div>
+            </aside>
           </div>
         </main>
-
-        {/* Social bar — always visible */}
-        <aside className="absolute right-5 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center gap-3">
-          <motion.div
-            className="flex flex-col items-center gap-2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.7, duration: 0.55 }}
-          >
-            <span
-              className="origin-center whitespace-nowrap text-[13px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]"
-              style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-            >
-              Follow me on
-            </span>
-            <div className="flex flex-col items-center">
-              <motion.div
-                className="w-px bg-gradient-to-b from-[var(--muted)] to-transparent opacity-50"
-                initial={{ height: 0 }}
-                animate={{ height: 40 }}
-                transition={{ delay: 0.9, duration: 0.6 }}
-              />
-              <svg width="8" height="8" viewBox="0 0 8 8" className="-mt-0.5 opacity-50" aria-hidden="true">
-                <path d="M4 8L0 4h8L4 8z" fill="#aab3c5" />
-              </svg>
-            </div>
-          </motion.div>
-
-          <div className="mt-1 flex flex-col items-center gap-4">
-            {[
-              { href: "https://www.facebook.com/share/1JC6A7g4MA/", label: "Facebook", color: "var(--facebook)", Icon: FacebookIcon },
-              { href: "https://www.instagram.com/shumail_butt123", label: "Instagram", color: "var(--instagram)", Icon: InstagramIcon },
-              { href: "https://linkedin.com", label: "LinkedIn", color: "var(--linkedin)", Icon: LinkedInIcon },
-            ].map(({ href, label, color, Icon }, i) => (
-              <motion.a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon flex h-10 w-10 items-center justify-center rounded-full bg-white/5"
-                style={{ color }}
-                aria-label={label}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1 + i * 0.12, type: "spring", stiffness: 320 }}
-                whileHover={{
-                  scale: 1.22,
-                  y: -3,
-                  backgroundColor: "rgba(255,255,255,0.12)",
-                  boxShadow: `0 6px 16px color-mix(in srgb, ${color} 45%, transparent)`,
-                }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Icon />
-              </motion.a>
-            ))}
-          </div>
-        </aside>
 
         <motion.a
           href="#top"

@@ -35,14 +35,17 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
 body {
   margin: 0;
-  min-height: 100vh;
-  font-family: var(--font-body);
-  background: #020617;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #0a1230;
   color: var(--white);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  overflow: hidden;
 }
 
 button,
@@ -51,18 +54,21 @@ a {
 }
 
 .hero-scale-shell {
+  position: relative;
   width: 100vw;
   height: 100dvh;
   min-height: 100vh;
   overflow: hidden;
-  display: grid;
-  place-items: center;
-  background: #020617;
+  background:
+    radial-gradient(ellipse 80% 70% at 12% 8%, #0f4c8a 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, #1a1550 0%, transparent 50%),
+    linear-gradient(145deg, #0c2a5a 0%, #0a1230 45%, #0d1538 75%, #1a1550 100%);
 }
 
 .hero-scale-fit {
-  position: relative;
-  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
   overflow: hidden;
 }
 
@@ -72,15 +78,6 @@ a {
   left: 0;
   flex-shrink: 0;
   will-change: transform;
-}
-
-.topo-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8'%3E%3Cpath d='M0 320 Q50 300 100 310 T200 300 T300 320 T400 310'/%3E%3Cpath d='M0 340 Q60 325 120 335 T240 325 T360 340 T400 335'/%3E%3Cpath d='M0 360 Q40 350 80 358 T160 350 T280 365 T400 355'/%3E%3Cpath d='M0 280 Q70 260 140 275 T280 265 T400 280'/%3E%3Cpath d='M0 300 Q55 285 110 295 T220 285 T340 305 T400 295'/%3E%3Cpath d='M50 380 Q100 370 150 378 T250 370 T350 385'/%3E%3Cpath d='M20 250 Q90 235 160 248 T300 240 T400 255'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 420px 420px;
-  background-position: bottom right;
-  background-repeat: no-repeat;
-  opacity: 1;
-  pointer-events: none;
 }
 
 .heading-gradient {
@@ -93,6 +90,11 @@ a {
 .heading-accent {
   color: var(--accent-deep);
   -webkit-text-fill-color: var(--accent-deep);
+}
+
+.welcome-line {
+  font-family: var(--font-welcome), Georgia, "Times New Roman", serif;
+  text-shadow: 0 0 24px rgba(59, 155, 255, 0.35);
 }
 
 .btn-primary {
