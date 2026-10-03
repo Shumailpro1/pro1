@@ -7,6 +7,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { IconButton } from "@/components/ui";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -54,7 +55,7 @@ function TypewriterHeading({
     <h2 className={className} style={style} aria-label={text}>
       <span>{displayed}</span>
       <motion.span
-        className="ml-0.5 inline-block h-[0.85em] w-[3px] translate-y-[0.06em] bg-[#111]"
+        className="ml-0.5 inline-block h-[0.85em] w-[3px] translate-y-[0.06em] bg-[var(--accent-bright)]"
         animate={{ opacity: done ? [1, 0, 1] : [1, 0] }}
         transition={{
           duration: done ? 1 : 0.45,
@@ -92,19 +93,18 @@ function ThumbArt({ kind }: { kind: (typeof features)[number]["art"] }) {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(160deg, #4a1a6e 0%, #c44a9a 45%, #ff8a5a 100%)",
+            "linear-gradient(160deg, #0f4c8a 0%, #1a1550 50%, #0a1230 100%)",
         }}
         aria-hidden="true"
       >
-        {/* TODO: <Image src="/assets/feature-vibrant.jpg" alt="" fill className="object-cover" /> */}
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 64 64" preserveAspectRatio="xMidYMax slice">
-          <path d="M8 64 V28" stroke="#1a0a28" strokeWidth="3" />
-          <path d="M8 28 C-4 18 -8 8 0 2 C6 12 8 20 8 28Z" fill="#1a0a28" />
-          <path d="M8 28 C20 16 28 8 34 2 C22 12 14 20 8 28Z" fill="#220e35" />
-          <path d="M52 64 V32" stroke="#1a0a28" strokeWidth="2.5" />
-          <path d="M52 32 C42 22 38 12 42 4 C48 12 52 22 52 32Z" fill="#1a0a28" />
-          <path d="M52 32 C60 22 66 14 70 6 C60 16 55 24 52 32Z" fill="#220e35" />
-        </svg>
+        <div
+          className="absolute -top-4 -right-4 h-16 w-16 rounded-full opacity-50 blur-xl"
+          style={{ background: "#3b8cff" }}
+        />
+        <div
+          className="absolute bottom-2 left-2 h-10 w-10 rounded-full opacity-40 blur-lg"
+          style={{ background: "#2f7de1" }}
+        />
       </div>
     );
   }
@@ -115,20 +115,12 @@ function ThumbArt({ kind }: { kind: (typeof features)[number]["art"] }) {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(145deg, #3a0a18 0%, #c42828 40%, #ff6a20 75%, #ffb040 100%)",
+            "linear-gradient(145deg, #0c2a5a 0%, #2f7de1 55%, #3b9bff 100%)",
         }}
         aria-hidden="true"
       >
-        {/* TODO: <Image src="/assets/feature-action.jpg" alt="" fill className="object-cover" /> */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-1/2"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent 10%, rgba(255,200,80,0.5) 50%, transparent 90%)",
-          }}
-        />
-        <div className="absolute top-[30%] left-[20%] h-2 w-8 -rotate-12 rounded-full bg-white/40 blur-[1px]" />
-        <div className="absolute top-[42%] right-[18%] h-1.5 w-10 rotate-6 rounded-full bg-[#ffd080]/50 blur-[1px]" />
+        <div className="absolute top-[30%] left-[20%] h-2 w-8 -rotate-12 rounded-full bg-white/35 blur-[1px]" />
+        <div className="absolute top-[42%] right-[18%] h-1.5 w-10 rotate-6 rounded-full bg-[#8fd3ff]/45 blur-[1px]" />
       </div>
     );
   }
@@ -138,24 +130,14 @@ function ThumbArt({ kind }: { kind: (typeof features)[number]["art"] }) {
       className="absolute inset-0"
       style={{
         background:
-          "linear-gradient(180deg, #1a0a40 0%, #6b1f8a 40%, #d63fa0 70%, #ff7a9a 100%)",
+          "linear-gradient(180deg, #0a1230 0%, #0f4c8a 45%, #1a1550 100%)",
       }}
       aria-hidden="true"
     >
-      {/* TODO: <Image src="/assets/feature-newera.jpg" alt="" fill className="object-cover" /> */}
-      <div className="absolute bottom-[18%] left-[12%] h-[42%] w-[14%] rounded-sm bg-[#8ec8ff]/55" />
-      <div className="absolute bottom-[10%] left-[30%] h-[55%] w-[18%] rounded-sm bg-[#f4a4d0]/5" />
-      <div className="absolute bottom-[14%] left-[52%] h-[48%] w-[16%] rounded-sm bg-[#c9a0e8]/55" />
-      <div className="absolute bottom-[8%] right-[12%] h-[38%] w-[12%] rounded-sm bg-[#9ec8f0]/45" />
-      <div
-        className="absolute bottom-[28%] right-[22%] rounded px-1 py-0.5 text-[5px] font-bold tracking-widest text-[#ff7ad4]"
-        style={{
-          boxShadow: "0 0 6px rgba(255,110,199,0.8)",
-          border: "1px solid #ff6ec7",
-        }}
-      >
-        VICE
-      </div>
+      <div className="absolute bottom-[18%] left-[12%] h-[42%] w-[14%] rounded-sm bg-[#3b8cff]/40" />
+      <div className="absolute bottom-[10%] left-[30%] h-[55%] w-[18%] rounded-sm bg-[#5eb0ff]/35" />
+      <div className="absolute bottom-[14%] left-[52%] h-[48%] w-[16%] rounded-sm bg-[#2f7de1]/45" />
+      <div className="absolute bottom-[8%] right-[12%] h-[38%] w-[12%] rounded-sm bg-[#8fd3ff]/30" />
     </div>
   );
 }
@@ -171,24 +153,22 @@ function HeroSceneArt() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, #1a1048 0%, #3b1a6e 18%, #8a2a8a 42%, #d63fa0 62%, #ff8a5a 82%, #ffb070 100%)",
+            "linear-gradient(160deg, #0c2a5a 0%, #0a1230 40%, #0f4c8a 70%, #1a1550 100%)",
         }}
         animate={{ scale: [1, 1.04, 1] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Horizon glow */}
       <motion.div
         className="absolute inset-x-0 bottom-[28%] h-[40%]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,170,100,0.55) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(59,140,255,0.35) 0%, transparent 70%)",
         }}
-        animate={{ opacity: [0.7, 1, 0.7] }}
+        animate={{ opacity: [0.55, 0.9, 0.55] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* City / water skyline */}
       <svg
         className="absolute bottom-0 left-0 h-[55%] w-full"
         viewBox="0 0 400 200"
@@ -196,16 +176,16 @@ function HeroSceneArt() {
       >
         <defs>
           <linearGradient id="whyTowerA" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f0a0d0" />
-            <stop offset="100%" stopColor="#7a3a90" />
+            <stop offset="0%" stopColor="#3b9bff" />
+            <stop offset="100%" stopColor="#0f4c8a" />
           </linearGradient>
           <linearGradient id="whyTowerB" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#90c0f0" />
-            <stop offset="100%" stopColor="#3a5a9a" />
+            <stop offset="0%" stopColor="#5eb0ff" />
+            <stop offset="100%" stopColor="#1a1550" />
           </linearGradient>
           <linearGradient id="whyWater" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6a3a80" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#1a0a30" />
+            <stop offset="0%" stopColor="#0f4c8a" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="#0a1230" />
           </linearGradient>
         </defs>
         <rect x="20" y="70" width="28" height="90" fill="url(#whyTowerB)" />
@@ -218,36 +198,35 @@ function HeroSceneArt() {
         <rect x="345" y="48" width="38" height="112" fill="url(#whyTowerA)" />
         {[60, 110, 160, 220, 270, 320].map((x) => (
           <g key={x} opacity="0.55">
-            <rect x={x} y="50" width="4" height="5" fill="#ffe8a0" />
-            <rect x={x + 10} y="65" width="4" height="5" fill="#ffe8a0" />
-            <rect x={x} y="80" width="4" height="5" fill="#ffc0e0" />
+            <rect x={x} y="50" width="4" height="5" fill="#8fd3ff" />
+            <rect x={x + 10} y="65" width="4" height="5" fill="#3b9bff" />
+            <rect x={x} y="80" width="4" height="5" fill="#5eb0ff" />
           </g>
         ))}
         <rect x="0" y="160" width="400" height="40" fill="url(#whyWater)" />
         <path
           d="M0 168 Q100 162 200 170 T400 165"
-          stroke="rgba(255,180,120,0.35)"
+          stroke="rgba(59,155,255,0.35)"
           strokeWidth="1.5"
           fill="none"
         />
       </svg>
 
-      {/* Helicopter silhouette — soft float */}
       <motion.svg
         className="absolute top-[22%] left-[28%] h-[18%] w-[28%]"
         viewBox="0 0 120 48"
         animate={{ y: [0, -6, 0], x: [0, 4, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       >
-        <ellipse cx="60" cy="6" rx="48" ry="2.5" fill="#0a0618" opacity="0.85" />
+        <ellipse cx="60" cy="6" rx="48" ry="2.5" fill="#060b1c" opacity="0.85" />
         <path
           d="M28 28 C32 18 48 14 62 16 C78 18 92 24 96 30 L88 32 C82 26 70 24 58 24 C46 24 36 28 32 32Z"
-          fill="#0a0618"
+          fill="#060b1c"
         />
-        <path d="M96 28 L112 22 L114 26 L98 32Z" fill="#0a0618" />
-        <path d="M40 32 L36 40 H48 L46 32Z" fill="#0a0618" />
-        <path d="M70 32 L68 40 H82 L78 32Z" fill="#0a0618" />
-        <circle cx="58" cy="22" r="3" fill="#3a2a50" />
+        <path d="M96 28 L112 22 L114 26 L98 32Z" fill="#060b1c" />
+        <path d="M40 32 L36 40 H48 L46 32Z" fill="#060b1c" />
+        <path d="M70 32 L68 40 H82 L78 32Z" fill="#060b1c" />
+        <circle cx="58" cy="22" r="3" fill="#3b8cff" />
       </motion.svg>
 
       <div
@@ -258,20 +237,6 @@ function HeroSceneArt() {
         }}
       />
     </div>
-  );
-}
-
-function ArrowRight() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path
-        d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"
-        stroke="black"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
@@ -296,13 +261,14 @@ function FeatureCard({
       className="h-full"
     >
       <motion.article
-        className="relative flex h-full min-h-[168px] cursor-pointer flex-col overflow-hidden rounded-[18px] bg-white p-3"
+        className="relative flex h-full min-h-[168px] cursor-pointer flex-col overflow-hidden rounded-[18px] border border-white/10 bg-white/[0.04] p-3"
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
         onTap={() => setHovered((v) => !v)}
         whileHover={{
           y: -4,
-          boxShadow: "0 14px 32px rgba(0,0,0,0.1)",
+          borderColor: "rgba(59,140,255,0.45)",
+          boxShadow: "0 14px 32px rgba(0,0,0,0.35)",
         }}
         transition={{ duration: 0.3, ease: easeOut }}
       >
@@ -369,14 +335,14 @@ function FeatureCard({
           transition={{ duration: 0.28, ease: easeOut }}
         >
           <h3
-            className="text-[13px] font-bold tracking-[0.06em] text-[#111] uppercase"
+            className="text-[13px] font-bold tracking-[0.06em] text-white uppercase"
             style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
           >
             {feature.title}
           </h3>
           <p
-            className="mt-1.5 text-[10.5px] leading-[1.5] font-medium text-[#555]"
-            style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+            className="mt-1.5 text-[10.5px] leading-[1.5] font-medium text-[var(--body-gray)]"
+            style={{ fontFamily: "var(--font-dm-sans), system-ui, sans-serif" }}
           >
             {feature.text}
           </p>
@@ -394,10 +360,34 @@ export default function WhyYoullLoveIt() {
     <section
       id="portfolio"
       ref={ref}
-      className="w-full scroll-mt-6 px-4 py-10 sm:px-6 sm:py-14 lg:px-10 lg:py-16"
+      className="relative w-full scroll-mt-6 overflow-hidden px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
     >
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div
+          className="absolute top-[10%] left-[-6%] h-64 w-64 rounded-full opacity-35 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(15,76,138,0.45) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute right-[-5%] bottom-[8%] h-72 w-72 rounded-full opacity-30 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(26,21,80,0.55) 0%, transparent 70%)",
+          }}
+        />
+      </div>
+
       <motion.div
-        className="mx-auto flex w-full max-w-[1200px] flex-col gap-3.5 overflow-hidden rounded-[24px] bg-[#f1efe9] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.06)] md:aspect-[3.4/1] md:flex-row"
+        className="relative z-10 mx-auto flex w-full max-w-[1100px] flex-col gap-3.5 overflow-hidden rounded-[24px] border border-white/10 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.3)] md:aspect-[3.4/1] md:flex-row"
+        style={{
+          background: `
+            radial-gradient(ellipse 70% 80% at 10% 20%, #0f4c8a 0%, transparent 55%),
+            radial-gradient(ellipse 50% 60% at 90% 90%, #1a1550 0%, transparent 50%),
+            linear-gradient(145deg, #0c2a5a 0%, #0a1230 45%, #0d1538 75%, #1a1550 100%)
+          `,
+        }}
         initial={{ opacity: 0, y: 40, filter: "blur(6px)" }}
         animate={
           inView
@@ -411,7 +401,7 @@ export default function WhyYoullLoveIt() {
           <TypewriterHeading
             text="PROJECTS"
             active={inView}
-            className="mb-3.5 text-[26px] leading-none font-normal tracking-[-0.02em] text-[#111] uppercase sm:text-[28px] lg:text-[30px]"
+            className="mb-3.5 text-[26px] leading-none font-normal tracking-[-0.02em] text-white uppercase sm:text-[28px] lg:text-[30px]"
             style={{ fontFamily: "var(--font-about-display), Impact, sans-serif" }}
           />
 
@@ -455,41 +445,18 @@ export default function WhyYoullLoveIt() {
               Begins
             </motion.h3>
 
-            <motion.a
-              href="#discover"
-              className="relative flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#d9f24a]"
-              aria-label="Discover more"
+            <motion.div
               initial={{ opacity: 0, scale: 0.5 }}
-              animate={
-                inView
-                  ? {
-                      opacity: 1,
-                      scale: 1,
-                      boxShadow: [
-                        "0 0 0 0 rgba(217,242,74,0.45)",
-                        "0 0 0 10px rgba(217,242,74,0)",
-                        "0 0 0 0 rgba(217,242,74,0.45)",
-                      ],
-                    }
-                  : undefined
-              }
-              transition={{
-                delay: 0.9,
-                opacity: { duration: 0.4 },
-                scale: { type: "spring", stiffness: 280, damping: 18 },
-                boxShadow: { duration: 2.4, repeat: Infinity, ease: "easeOut" },
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.92 }}
+              animate={inView ? { opacity: 1, scale: 1 } : undefined}
+              transition={{ delay: 0.9, type: "spring", stiffness: 280, damping: 18 }}
             >
-              <motion.span
-                className="inline-flex"
-                animate={{ x: [0, 3, 0] }}
-                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <ArrowRight />
-              </motion.span>
-            </motion.a>
+              <IconButton
+                href="#portfolio"
+                variant="primary"
+                size="md"
+                ariaLabel="Discover more"
+              />
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>

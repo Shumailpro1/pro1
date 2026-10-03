@@ -3,13 +3,14 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui";
 
 const navLinks = [
   { label: "Home", href: "#top" },
   { label: "About", href: "#about" },
-  { label: "Portfolio", href: "#portfolio" },
+  { label: "Project", href: "#portfolio" },
   { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
+  { label: "Education", href: "#education" },
 ];
 const DESIGN_W = 1280;
 const DESIGN_H = 800;
@@ -320,11 +321,13 @@ export default function Hero() {
                   whileHover={{ y: -2, color: "#3b8cff" }}
                   whileTap={{ scale: 0.96 }}
                   onClick={(e) => {
+                    e.preventDefault();
                     const id = href.replace("#", "");
                     const el = document.getElementById(id);
                     if (!el) return;
-                    e.preventDefault();
-                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    const top =
+                      el.getBoundingClientRect().top + window.scrollY - 8;
+                    window.scrollTo({ top, behavior: "smooth" });
                     window.history.replaceState(null, "", href);
                   }}
                 >
@@ -414,37 +417,12 @@ export default function Hero() {
               animate="visible"
               className="mb-7 flex flex-wrap items-center gap-3.5"
             >
-              <motion.a
-                href="#cv"
-                className="btn-primary inline-flex h-9 min-w-[110px] items-center justify-center rounded-full px-5 text-[13px] font-medium text-white"
-                whileHover={{ y: -3, scale: 1.04, boxShadow: "0 10px 28px rgba(59,140,255,0.75)" }}
-                whileTap={{ scale: 0.96, y: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              >
+              <Button href="#cv" variant="primary">
                 Download cv
-              </motion.a>
-              <motion.a
-                href="#portfolio"
-                className="btn-outline group inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-5 text-[13px] font-medium text-white"
-                whileHover={{
-                  y: -3,
-                  scale: 1.04,
-                  borderColor: "rgba(59,140,255,0.9)",
-                  boxShadow: "0 6px 20px rgba(59,140,255,0.3)",
-                }}
-                whileTap={{ scale: 0.96, y: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              >
+              </Button>
+              <Button href="#portfolio" variant="outline" showArrow>
                 See my work
-                <motion.span
-                  className="inline-block text-[13px] leading-none"
-                  aria-hidden="true"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  →
-                </motion.span>
-              </motion.a>
+              </Button>
             </motion.div>
 
             <motion.div
