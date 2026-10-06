@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui";
+import LazyThreeBackdrop from "@/components/three/LazyThreeBackdrop";
+import { easeOut } from "@/lib/motion";
 
 const navLinks = [
   { label: "Home", href: "#top" },
@@ -14,8 +16,6 @@ const navLinks = [
 ];
 const DESIGN_W = 1280;
 const DESIGN_H = 800;
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -209,11 +209,12 @@ function MouseIcon() {
 export default function Hero() {
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useLayoutEffect(() => {
     const updateScale = () => {
-      // Scale to screen width so the full top bar (name + all nav links) always shows.
-      // Pin to top; fill any leftover area with the stage background via shell.
+      // Desktop scale-to-fit only (lg+)
+      if (window.innerWidth < 1024) return;
       const s = Math.max(window.innerWidth / DESIGN_W, 0.01);
       setScale(s);
       setOffset({ x: 0, y: 0 });
@@ -227,8 +228,213 @@ export default function Hero() {
     };
   }, []);
 
+  const scrollToSection = (href: string) => {
+    const id = href.replace("#", "");
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 8;
+    window.scrollTo({ top, behavior: "smooth" });
+    window.history.replaceState(null, "", href);
+    setMenuOpen(false);
+  };
+
   return (
-    <section className="hero-scale-shell">
+    <>
+      {/* ——— Mobile / tablet fluid hero ——— */}
+      <section
+        className="relative overflow-hidden lg:hidden"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 70% at 12% 8%, #0f4c8a 0%, transparent 55%),
+            radial-gradient(ellipse 60% 50% at 85% 90%, #1a1550 0%, transparent 50%),
+            linear-gradient(145deg, #0c2a5a 0%, #0a1230 45%, #0d1538 75%, #1a1550 100%)
+          `,
+        }}
+      >
+        <LazyThreeBackdrop opacity={0.55} />
+        <header className="relative z-30 flex items-center justify-between px-4 pt-5 sm:px-6">
+          <a href="#top" className="flex items-center gap-2">
+            <LogoIcon />
+            <span
+              className="text-[18px] font-semibold tracking-[-0.01em] text-white sm:text-[20px]"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Shumail Rizwan
+            </span>
+          </a>
+          <button
+            type="button"
+            className="relative z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="sr-only">Menu</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              {menuOpen ? (
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              )}
+            </svg>
+          </button>
+        </header>
+
+        {/* Side drawer — overlays content, does not push the picture */}
+        <AnimatePresence>
+          {menuOpen && (
+            <>
+              <motion.button
+                type="button"
+                className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] lg:hidden"
+                aria-label="Close menu overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setMenuOpen(false)}
+              />
+              <motion.nav
+                className="fixed top-0 right-0 z-50 flex h-dvh w-[min(78vw,300px)] flex-col border-l border-white/10 bg-[rgba(10,18,48,0.97)] px-5 pt-6 pb-8 shadow-[-12px_0_40px_rgba(0,0,0,0.45)] backdrop-blur-md lg:hidden"
+                aria-label="Mobile"
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              >
+                <div className="mb-8 flex items-center justify-between">
+                  <span
+                    className="text-[12px] font-semibold tracking-[0.2em] text-[var(--accent-bright)] uppercase"
+                    style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+                  >
+                    Menu
+                  </span>
+                  <button
+                    type="button"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white"
+                    aria-label="Close menu"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {navLinks.map(({ label, href }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      className="rounded-xl px-3 py-3 text-[15px] font-medium text-[var(--muted)] transition-colors hover:bg-white/5 hover:text-white"
+                      style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        scrollToSection(href);
+                      }}
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </motion.nav>
+            </>
+          )}
+        </AnimatePresence>
+
+        <div className="relative z-10 flex flex-col items-center px-4 pt-8 pb-12 sm:px-6 sm:pt-10 sm:pb-14">
+          <motion.div
+            className="frame-glow relative mb-8 h-[240px] w-[160px] overflow-hidden rounded-full sm:h-[280px] sm:w-[185px]"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, ease: easeOut }}
+          >
+            <Image
+              src="/assets/profile-window.jpg"
+              alt="Shumail Rizwan"
+              fill
+              priority
+              className="object-cover object-[center_8%]"
+              sizes="185px"
+            />
+          </motion.div>
+
+          <motion.p
+            className="welcome-line mb-2 text-center text-[16px] font-medium italic tracking-[0.04em]"
+            style={{
+              fontFamily: "var(--font-welcome)",
+              color: "var(--accent-bright)",
+            }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+          >
+            Welcome to my portfolio!
+          </motion.p>
+
+          <motion.h1
+            className="mb-0 text-center text-[34px] font-semibold leading-[1.15] tracking-[-0.02em] sm:text-[42px]"
+            style={{ fontFamily: "var(--font-heading)" }}
+            aria-label="Hello, my name's Shumail"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.55 }}
+          >
+            <span className="heading-gradient">Hello, my</span>
+            <br />
+            <span className="heading-gradient">name&apos;s </span>
+            <TypewriterName text="Shumail" startDelay={600} />
+          </motion.h1>
+
+          <motion.p
+            className="mt-4 max-w-[340px] text-center text-[14px] leading-[1.65] text-[var(--body-gray)] sm:text-[15px]"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.5 }}
+          >
+            I&apos;m a visual designer from Gujranwala, Pakistan. Currently
+            working with{" "}
+            <strong className="font-semibold text-white">@Ideo</strong> as a UI
+            Consultant.
+          </motion.p>
+
+          <motion.div
+            className="mt-6 flex flex-wrap items-center justify-center gap-3"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45, duration: 0.5 }}
+          >
+            <Button href="#cv" variant="primary">
+              Download cv
+            </Button>
+            <Button href="#portfolio" variant="outline" showArrow>
+              See my work
+            </Button>
+          </motion.div>
+
+          <div className="mt-8 flex items-center gap-3">
+            {[
+              { href: "https://www.facebook.com/share/1JC6A7g4MA/", label: "Facebook", color: "var(--facebook)", Icon: FacebookIcon },
+              { href: "https://www.instagram.com/shumail_butt123", label: "Instagram", color: "var(--instagram)", Icon: InstagramIcon },
+              { href: "https://linkedin.com", label: "LinkedIn", color: "var(--linkedin)", Icon: LinkedInIcon },
+            ].map(({ href, label, color, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5"
+                style={{ color }}
+                aria-label={label}
+              >
+                <Icon />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ——— Desktop scaled hero ——— */}
+      <section className="hero-scale-shell hidden lg:block">
       <div
         className="hero-scale-fit"
         style={{
@@ -254,6 +460,7 @@ export default function Hero() {
             `,
           }}
         >
+        <LazyThreeBackdrop opacity={0.55} />
         <motion.div
           className="pointer-events-none absolute -left-24 -top-24 z-0 h-72 w-72 rounded-full bg-[#3b8cff]/20 blur-3xl"
           animate={{ opacity: [0.25, 0.5, 0.25], scale: [1, 1.15, 1] }}
@@ -322,13 +529,7 @@ export default function Hero() {
                   whileTap={{ scale: 0.96 }}
                   onClick={(e) => {
                     e.preventDefault();
-                    const id = href.replace("#", "");
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    const top =
-                      el.getBoundingClientRect().top + window.scrollY - 8;
-                    window.scrollTo({ top, behavior: "smooth" });
-                    window.history.replaceState(null, "", href);
+                    scrollToSection(href);
                   }}
                 >
                   {label}
@@ -630,5 +831,6 @@ export default function Hero() {
       </motion.div>
       </div>
     </section>
+    </>
   );
 }

@@ -58,19 +58,9 @@ export const footerData: FooterData = {
       icon: "linkedin",
     },
     {
-      label: "Twitter / X",
-      url: "https://x.com",
-      icon: "twitter",
-    },
-    {
       label: "Instagram",
       url: "https://www.instagram.com/shumail_butt123",
       icon: "instagram",
-    },
-    {
-      label: "WhatsApp",
-      url: "https://wa.me/923295359129",
-      icon: "whatsapp",
     },
   ],
   quickLinks: [

@@ -6,10 +6,16 @@
  */
 
 import { motion, useInView } from "framer-motion";
+import {
+  Bike,
+  Camera,
+  Music2,
+  type LucideIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { IconButton } from "@/components/ui";
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
+import LazyThreeBackdrop from "@/components/three/LazyThreeBackdrop";
+import { easeOut } from "@/lib/motion";
 
 function TypewriterHeading({
   text,
@@ -68,25 +74,37 @@ function TypewriterHeading({
   );
 }
 
-const features = [
+const features: {
+  title: string;
+  text: string;
+  art: "sunset" | "action" | "neon";
+  icon: LucideIcon;
+  tag: string;
+}[] = [
   {
-    title: "Vibrant World",
-    text: "A living, breathing world full of life, stories and unforgettable moments.",
+    title: "RideGo",
+    text: "Bike rental map app with live availability, booking, and route tips.",
     art: "sunset",
+    icon: Bike,
+    tag: "Mobile",
   },
   {
-    title: "Epic Action",
-    text: "High-speed chases, intense shootouts and limitless ways to play your way.",
+    title: "LensBox",
+    text: "Photo portfolio builder with galleries, filters, and client sharing.",
     art: "action",
+    icon: Camera,
+    tag: "Creative",
   },
   {
-    title: "New Era",
-    text: "Next-gen gameplay, stunning visuals and a bold new story.",
+    title: "WaveDeck",
+    text: "Music discovery player with playlists, mood mixes, and social drops.",
     art: "neon",
+    icon: Music2,
+    tag: "Entertainment",
   },
-] as const;
+];
 
-function ThumbArt({ kind }: { kind: (typeof features)[number]["art"] }) {
+function ThumbArt({ kind }: { kind: "sunset" | "action" | "neon" }) {
   if (kind === "sunset") {
     return (
       <div
@@ -246,6 +264,7 @@ function FeatureCard({
   feature: (typeof features)[number];
 }) {
   const [hovered, setHovered] = useState(false);
+  const Icon = feature.icon;
 
   return (
     <motion.div
@@ -272,9 +291,9 @@ function FeatureCard({
         }}
         transition={{ duration: 0.3, ease: easeOut }}
       >
-        {/* Default small thumbnail */}
+        {/* Default icon thumbnail */}
         <motion.div
-          className="relative z-0 h-14 w-14 overflow-hidden rounded-xl sm:h-16 sm:w-16"
+          className="relative z-0 flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl sm:h-16 sm:w-16"
           animate={
             hovered
               ? { opacity: 0, scale: 0.8 }
@@ -283,6 +302,9 @@ function FeatureCard({
           transition={{ duration: 0.3, ease: easeOut }}
         >
           <ThumbArt kind={feature.art} />
+          <span className="relative z-[1] flex h-10 w-10 items-center justify-center rounded-[12px] border border-white/25 bg-[rgba(10,18,48,0.7)] text-[var(--accent-bright)] shadow-[0_8px_20px_rgba(0,0,0,0.4)] backdrop-blur-sm sm:h-11 sm:w-11">
+            <Icon size={22} strokeWidth={1.85} aria-hidden="true" />
+          </span>
         </motion.div>
 
         {/* Expanded picture — grows to fill the card */}
@@ -307,12 +329,22 @@ function FeatureCard({
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.5) 100%)",
+                "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.65) 100%)",
             }}
           />
-          <motion.p
-            className="absolute bottom-3 left-3 right-3 text-[12px] font-bold tracking-[0.08em] text-white uppercase"
-            style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+          <motion.div
+            className="absolute top-3 left-3 flex h-11 w-11 items-center justify-center rounded-[12px] border border-white/25 bg-[rgba(10,18,48,0.65)] text-[var(--accent-bright)] backdrop-blur-sm"
+            animate={
+              hovered
+                ? { opacity: 1, scale: 1 }
+                : { opacity: 0, scale: 0.7 }
+            }
+            transition={{ duration: 0.3, delay: hovered ? 0.08 : 0, ease: easeOut }}
+          >
+            <Icon size={22} strokeWidth={1.85} aria-hidden="true" />
+          </motion.div>
+          <motion.div
+            className="absolute right-3 bottom-3 left-3"
             animate={
               hovered
                 ? { opacity: 1, y: 0 }
@@ -320,8 +352,19 @@ function FeatureCard({
             }
             transition={{ duration: 0.3, delay: hovered ? 0.12 : 0, ease: easeOut }}
           >
-            {feature.title}
-          </motion.p>
+            <span
+              className="mb-1.5 inline-block rounded-full border border-[rgba(59,140,255,0.45)] bg-[rgba(10,18,48,0.55)] px-2 py-0.5 text-[9px] font-semibold tracking-[0.14em] text-[var(--accent-bright)] uppercase"
+              style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+            >
+              {feature.tag}
+            </span>
+            <p
+              className="text-[12px] font-bold tracking-[0.08em] text-white uppercase"
+              style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+            >
+              {feature.title}
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* Text — hides when picture expands */}
@@ -334,6 +377,14 @@ function FeatureCard({
           }
           transition={{ duration: 0.28, ease: easeOut }}
         >
+          <div className="mb-1.5 flex items-center gap-2">
+            <span
+              className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[9px] font-semibold tracking-[0.12em] text-[var(--muted)] uppercase"
+              style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
+            >
+              {feature.tag}
+            </span>
+          </div>
           <h3
             className="text-[13px] font-bold tracking-[0.06em] text-white uppercase"
             style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
@@ -362,6 +413,7 @@ export default function WhyYoullLoveIt() {
       ref={ref}
       className="relative w-full scroll-mt-6 overflow-hidden px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
     >
+      <LazyThreeBackdrop opacity={0.4} />
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div
           className="absolute top-[10%] left-[-6%] h-64 w-64 rounded-full opacity-35 blur-3xl"
@@ -380,7 +432,7 @@ export default function WhyYoullLoveIt() {
       </div>
 
       <motion.div
-        className="relative z-10 mx-auto flex w-full max-w-[1100px] flex-col gap-3.5 overflow-hidden rounded-[24px] border border-white/10 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.3)] md:aspect-[3.4/1] md:flex-row"
+        className="relative z-10 mx-auto flex w-full max-w-[1100px] flex-col gap-3.5 overflow-hidden rounded-[24px] border border-white/10 p-3 shadow-[0_8px_28px_rgba(0,0,0,0.3)] sm:p-4 md:aspect-[3.4/1] md:flex-row"
         style={{
           background: `
             radial-gradient(ellipse 70% 80% at 10% 20%, #0f4c8a 0%, transparent 55%),

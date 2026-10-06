@@ -8,8 +8,8 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
 import { Button } from "@/components/ui";
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
+import LazyThreeBackdrop from "@/components/three/LazyThreeBackdrop";
+import { easeOut } from "@/lib/motion";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -93,10 +93,10 @@ function AboutVisual({ inView }: { inView: boolean }) {
         }
       >
         <Image
-          src="/assets/about-visual.jpg"
-          alt="Digital technology and creative development"
+          src="/assets/about-theme.jpg"
+          alt="Developer workspace with code editor"
           fill
-          className="object-cover object-center"
+          className="object-cover object-[center_30%]"
           sizes="(max-width: 768px) 100vw, 700px"
           priority
         />
@@ -243,6 +243,7 @@ export default function AboutMe() {
       ref={ref}
       className="relative w-full scroll-mt-6 overflow-hidden px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
     >
+      <LazyThreeBackdrop opacity={0.4} />
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div
           className="absolute top-[12%] left-[-6%] h-64 w-64 rounded-full opacity-35 blur-3xl"
@@ -272,7 +273,7 @@ export default function AboutMe() {
             Get to know me
           </motion.p>
           <motion.h2
-            className="text-[32px] leading-none font-normal tracking-[-0.02em] text-white uppercase sm:text-[40px]"
+            className="text-[28px] leading-none font-normal tracking-[-0.02em] text-white uppercase sm:text-[36px] lg:text-[40px]"
             style={{ fontFamily: "var(--font-about-display), Impact, sans-serif" }}
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : undefined}
@@ -283,7 +284,7 @@ export default function AboutMe() {
         </div>
 
         <motion.div
-          className="flex w-full flex-col overflow-hidden rounded-[24px] border border-white/10 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.3)] md:aspect-[3.1/1] md:flex-row md:items-stretch"
+          className="flex w-full flex-col overflow-hidden rounded-[24px] border border-white/10 p-3 shadow-[0_8px_28px_rgba(0,0,0,0.3)] sm:p-4 md:aspect-[3.1/1] md:flex-row md:items-stretch"
           style={{
             background: `
               radial-gradient(ellipse 70% 80% at 10% 20%, #0f4c8a 0%, transparent 55%),
@@ -340,7 +341,7 @@ export default function AboutMe() {
             transition={{ delay: 0.2, duration: 0.75, ease: easeOut }}
           >
             <motion.div
-              className="relative h-[300px] w-full overflow-hidden rounded-[22px] border border-white/10 md:h-full md:min-h-0"
+              className="relative h-[220px] w-full overflow-hidden rounded-[22px] border border-white/10 sm:h-[280px] md:h-full md:min-h-0"
               style={{
                 boxShadow:
                   "0 0 0 1px rgba(59,140,255,0.2), 0 16px 40px rgba(0,0,0,0.35), inset 0 0 40px rgba(59,140,255,0.08)",

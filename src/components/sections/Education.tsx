@@ -4,8 +4,8 @@ import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { education, certifications } from "@/data/education";
 import EducationCard from "@/components/ui/EducationCard";
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
+import LazyThreeBackdrop from "@/components/three/LazyThreeBackdrop";
+import { easeOut } from "@/lib/motion";
 
 export default function Education() {
   const ref = useRef<HTMLElement>(null);
@@ -18,6 +18,7 @@ export default function Education() {
       ref={ref}
       className="relative w-full scroll-mt-6 overflow-hidden px-4 py-14 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
     >
+      <LazyThreeBackdrop opacity={0.38} />
       {/* Soft navy atmosphere — same family as hero/skills */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div
@@ -48,7 +49,7 @@ export default function Education() {
             My Journey
           </motion.p>
           <motion.h2
-            className="text-[32px] leading-none font-normal tracking-[-0.02em] text-white uppercase sm:text-[40px]"
+            className="text-[28px] leading-none font-normal tracking-[-0.02em] text-white uppercase sm:text-[36px] lg:text-[40px]"
             style={{ fontFamily: "var(--font-about-display), Impact, sans-serif" }}
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : undefined}
